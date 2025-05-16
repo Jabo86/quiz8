@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 18</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 18</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (511-540) simulate, uniche rispetto ai Moduli 1-17 e ai Moduli 19-20
+        const questions = [
+            {
+                question: "La gestione del paziente con diabete mellito include:",
+                options: [
+                    "monitoraggio regolare della glicemia",
+                    "somministrazione di dolci",
+                    "ignorare le misurazioni"
+                ],
+                correct: "monitoraggio regolare della glicemia",
+                explanation: "Il diabete mellito richiede monitoraggio regolare della glicemia per prevenire complicanze. L’OSS deve annotare i valori, assistere nella dieta, e segnalare all’infermiere variazioni significative."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di ipoglicemia in un paziente diabetico?",
+                options: [
+                    "sudorazione e tremori",
+                    "sete intensa",
+                    "energia elevata"
+                ],
+                correct: "sudorazione e tremori",
+                explanation: "Sudorazione e tremori indicano ipoglicemia. L’OSS deve offrire zuccheri semplici se cosciente, monitorare il paziente, e segnalare all’infermiere per una gestione medica."
+            },
+            {
+                question: "La gestione del paziente con ipertensione arteriosa include:",
+                options: [
+                    "misurazione regolare della pressione",
+                    "offerta di cibi salati",
+                    "ignorare i sintomi"
+                ],
+                correct: "misurazione regolare della pressione",
+                explanation: "L’ipertensione richiede misurazione regolare della pressione. L’OSS deve annotare i valori, promuovere una dieta iposodica, e segnalare all’infermiere valori elevati."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di crisi ipertensiva?",
+                options: [
+                    "cefalea e vertigini",
+                    "pressione normale",
+                    "assenza di sintomi"
+                ],
+                correct: "cefalea e vertigini",
+                explanation: "Cefalea e vertigini indicano crisi ipertensiva. L’OSS deve misurare la pressione, mantenere il paziente calmo, e segnalare all’infermiere immediatamente."
+            },
+            {
+                question: "La gestione del paziente con insufficienza cardiaca include:",
+                options: [
+                    "monitoraggio dell’edema periferico",
+                    "offerta di cibi pesanti",
+                    "ignorare i sintomi"
+                ],
+                correct: "monitoraggio dell’edema periferico",
+                explanation: "L’insufficienza cardiaca richiede monitoraggio dell’edema periferico e del peso. L’OSS deve annotare variazioni, assistere nella dieta, e segnalare all’infermiere sintomi come dispnea."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di peggioramento dell’insufficienza cardiaca?",
+                options: [
+                    "edema e affanno",
+                    "respirazione regolare",
+                    "energia elevata"
+                ],
+                correct: "edema e affanno",
+                explanation: "Edema e affanno indicano peggioramento dell’insufficienza cardiaca. L’OSS deve monitorare i sintomi, mantenere il paziente in posizione semi-seduta, e segnalare all’infermiere."
+            },
+            {
+                question: "La gestione del paziente con broncopneumopatia cronica ostruttiva (BPCO) include:",
+                options: [
+                    "promozione di esercizi respiratori",
+                    "esposizione a fumi",
+                    "ignorare la dispnea"
+                ],
+                correct: "promozione di esercizi respiratori",
+                explanation: "La BPCO richiede esercizi respiratori per migliorare la ventilazione. L’OSS deve monitorare la saturazione, evitare irritanti, e segnalare all’infermiere sintomi come cianosi."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di riacutizzazione della BPCO?",
+                options: [
+                    "aumento della dispnea",
+                    "respirazione regolare",
+                    "cute rosea"
+                ],
+                correct: "aumento della dispnea",
+                explanation: "L’aumento della dispnea indica riacutizzazione della BPCO. L’OSS deve monitorare la respirazione, fornire ossigeno se prescritto, e segnalare all’infermiere immediatamente."
+            },
+            {
+                question: "La gestione del paziente con insufficienza renale cronica include:",
+                options: [
+                    "monitoraggio della diuresi",
+                    "offerta di cibi ricchi di potassio",
+                    "ignorare l’edema"
+                ],
+                correct: "monitoraggio della diuresi",
+                explanation: "L’insufficienza renale cronica richiede monitoraggio della diuresi e del peso. L’OSS deve annotare variazioni, seguire la dieta prescritta, e segnalare all’infermiere sintomi come oliguria."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di sovraccarico idrico?",
+                options: [
+                    "edema e ipertensione",
+                    "diuresi abbondante",
+                    "cute asciutta"
+                ],
+                correct: "edema e ipertensione",
+                explanation: "Edema e ipertensione indicano sovraccarico idrico. L’OSS deve monitorare i parametri vitali, limitare i liquidi se indicato, e segnalare all’infermiere."
+            },
+            {
+                question: "La gestione del paziente con artrite reumatoide include:",
+                options: [
+                    "promozione di esercizi leggeri",
+                    "movimenti forzati",
+                    "ignorare il dolore"
+                ],
+                correct: "promozione di esercizi leggeri",
+                explanation: "L’artrite reumatoide richiede esercizi leggeri per mantenere la mobilità. L’OSS deve assistere nei movimenti, monitorare il dolore, e segnalare all’infermiere rigidità articolare."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di riacutizzazione dell’artrite reumatoide?",
+                options: [
+                    "gonfiore e calore articolare",
+                    "mobilità completa",
+                    "assenza di dolore"
+                ],
+                correct: "gonfiore e calore articolare",
+                explanation: "Gonfiore e calore articolare indicano riacutizzazione. L’OSS deve monitorare le articolazioni, applicare impacchi se indicato, e segnalare all’infermiere."
+            },
+            {
+                question: "La gestione del paziente con osteoporosi include:",
+                options: [
+                    "prevenzione delle cadute",
+                    "movimenti rapidi",
+                    "ignorare il rischio di fratture"
+                ],
+                correct: "prevenzione delle cadute",
+                explanation: "L’osteoporosi richiede prevenzione delle cadute per evitare fratture. L’OSS deve assistere nei trasferimenti, mantenere l’ambiente sicuro, e segnalare all’infermiere episodi di instabilità."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di rischio di frattura da osteoporosi?",
+                options: [
+                    "postura curva e dolore",
+                    "mobilità fluida",
+                    "assenza di sintomi"
+                ],
+                correct: "postura curva e dolore",
+                explanation: "Postura curva e dolore indicano rischio di frattura. L’OSS deve monitorare la postura, usare ausili, e segnalare all’infermiere segni di peggioramento."
+            },
+            {
+                question: "La gestione del paziente con anemia cronica include:",
+                options: [
+                    "monitoraggio della stanchezza",
+                    "attività fisica intensa",
+                    "ignorare i sintomi"
+                ],
+                correct: "monitoraggio della stanchezza",
+                explanation: "L’anemia cronica richiede monitoraggio della stanchezza e della cute. L’OSS deve annotare i sintomi, promuovere il riposo, e segnalare all’infermiere segni come pallore."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di anemia cronica?",
+                options: [
+                    "pallore e affaticamento",
+                    "energia elevata",
+                    "cute rosea"
+                ],
+                correct: "pallore e affaticamento",
+                explanation: "Pallore e affaticamento indicano anemia cronica. L’OSS deve monitorare il paziente, evitare sforzi eccessivi, e segnalare all’infermiere sintomi gravi."
+            },
+            {
+                question: "La gestione del paziente con epatopatia cronica include:",
+                options: [
+                    "monitoraggio dell’ittero",
+                    "offerta di cibi grassi",
+                    "ignorare i sintomi"
+                ],
+                correct: "monitoraggio dell’ittero",
+                explanation: "L’epatopatia cronica richiede monitoraggio dell’ittero e dell’addome. L’OSS deve annotare variazioni, seguire la dieta prescritta, e segnalare all’infermiere sintomi come ascite."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di epatopatia cronica?",
+                options: [
+                    "ittero e ascite",
+                    "cute rosea",
+                    "appetito regolare"
+                ],
+                correct: "ittero e ascite",
+                explanation: "Ittero e ascite indicano epatopatia cronica. L’OSS deve monitorare la cute e l’addome, evitare cibi pesanti, e segnalare all’infermiere."
+            },
+            {
+                question: "La gestione del paziente con gotta include:",
+                options: [
+                    "promozione di una dieta povera di purine",
+                    "offerta di cibi ricchi di purine",
+                    "ignorare il dolore"
+                ],
+                correct: "promozione di una dieta povera di purine",
+                explanation: "La gotta richiede una dieta povera di purine per prevenire attacchi. L’OSS deve monitorare il dolore articolare, assistere nella dieta, e segnalare all’infermiere riacutizzazioni."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di attacco di gotta?",
+                options: [
+                    "dolore acuto e gonfiore articolare",
+                    "mobilità completa",
+                    "assenza di sintomi"
+                ],
+                correct: "dolore acuto e gonfiore articolare",
+                explanation: "Dolore acuto e gonfiore articolare indicano un attacco di gotta. L’OSS deve monitorare le articolazioni, applicare impacchi freddi se indicato, e segnalare all’infermiere."
+            },
+            {
+                question: "La gestione del paziente con malattia di Parkinson include:",
+                options: [
+                    "assistenza nei movimenti lenti",
+                    "movimenti forzati",
+                    "ignorare i tremori"
+                ],
+                correct: "assistenza nei movimenti lenti",
+                explanation: "La malattia di Parkinson richiede assistenza nei movimenti lenti per prevenire cadute. L’OSS deve monitorare i tremori, usare ausili, e segnalare all’infermiere difficoltà motorie."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di malattia di Parkinson?",
+                options: [
+                    "tremori e rigidità",
+                    "movimenti fluidi",
+                    "energia elevata"
+                ],
+                correct: "tremori e rigidità",
+                explanation: "Tremori e rigidità indicano malattia di Parkinson. L’OSS deve assistere nei trasferimenti, monitorare la mobilità, e segnalare all’infermiere peggioramenti."
+            },
+            {
+                question: "La gestione del paziente con sclerosi multipla include:",
+                options: [
+                    "monitoraggio della fatica",
+                    "attività fisica intensa",
+                    "ignorare i sintomi"
+                ],
+                correct: "monitoraggio della fatica",
+                explanation: "La sclerosi multipla richiede monitoraggio della fatica e della mobilità. L’OSS deve assistere nei movimenti, promuovere il riposo, e segnalare all’infermiere sintomi come spasticità."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di sclerosi multipla?",
+                options: [
+                    "fatica e debolezza muscolare",
+                    "mobilità completa",
+                    "assenza di sintomi"
+                ],
+                correct: "fatica e debolezza muscolare",
+                explanation: "Fatica e debolezza muscolare indicano sclerosi multipla. L’OSS deve monitorare il paziente, evitare sforzi eccessivi, e segnalare all’infermiere."
+            },
+            {
+                question: "La gestione del paziente con ulcere venose include:",
+                options: [
+                    "elevazione degli arti e compressione",
+                    "massaggi sulla lesione",
+                    "ignorare la medicazione"
+                ],
+                correct: "elevazione degli arti e compressione",
+                explanation: "Le ulcere venose richiedono elevazione degli arti e compressione per migliorare la circolazione. L’OSS deve monitorare la lesione, usare medicazioni, e segnalare all’infermiere segni di infezione."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di infezione da ulcera venosa?",
+                options: [
+                    "secrezioni maleodoranti",
+                    "cute integra",
+                    "riduzione del dolore"
+                ],
+                correct: "secrezioni maleodoranti",
+                explanation: "Secrezioni maleodoranti indicano infezione da ulcera venosa. L’OSS deve monitorare la lesione, usare DPI, e segnalare all’infermiere per una valutazione."
+            },
+            {
+                question: "La gestione del paziente con ipotiroidismo include:",
+                options: [
+                    "monitoraggio della stanchezza",
+                    "offerta di cibi ricchi di iodio",
+                    "ignorare i sintomi"
+                ],
+                correct: "monitoraggio della stanchezza",
+                explanation: "L’ipotiroidismo richiede monitoraggio della stanchezza e del peso. L’OSS deve annotare i sintomi, promuovere una dieta bilanciata, e segnalare all’infermiere segni come bradicardia."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di ipotiroidismo?",
+                options: [
+                    "stanchezza e pelle secca",
+                    "energia elevata",
+                    "perdita di peso"
+                ],
+                correct: "stanchezza e pelle secca",
+                explanation: "Stanchezza e pelle secca indicano ipotiroidismo. L’OSS deve monitorare il paziente, promuovere il comfort, e segnalare all’infermiere sintomi gravi."
+            },
+            {
+                question: "La gestione del paziente con ipertiroidismo include:",
+                options: [
+                    "monitoraggio della tachicardia",
+                    "offerta di cibi pesanti",
+                    "ignorare i sintomi"
+                ],
+                correct: "monitoraggio della tachicardia",
+                explanation: "L’ipertiroidismo richiede monitoraggio della tachicardia e del peso. L’OSS deve annotare i sintomi, promuovere il riposo, e segnalare all’infermiere segni come tremori."
+            },
+            {
+                question: "Quale tra i seguenti è un segno di ipertiroidismo?",
+                options: [
+                    "tachicardia e perdita di peso",
+                    "bradicardia",
+                    "energia ridotta"
+                ],
+                correct: "tachicardia e perdita di peso",
+                explanation: "Tachicardia e perdita di peso indicano ipertiroidismo. L’OSS deve monitorare i parametri vitali, evitare stimoli, e segnalare all’infermiere."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 511}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0);
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+            document.getElementById("submit").addEventListener("click", () => {
+                if (confirm("Sei sicuro di voler inviare le risposte?")) {
+                    checkAnswers();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
